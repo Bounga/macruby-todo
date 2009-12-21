@@ -9,9 +9,9 @@
 class Todo
 	attr_accessor :desc, :created_on, :done
 
-	def initialize(desc, created_on=Time.now.strftime('%Y/%m/%d'), done=false)
+	def initialize(desc, created_on=Time.now, done=false)
 		@desc = desc
-		@created_on = created_on
+		@created_on = created_on.strftime('%Y/%m/%d')
 		@done = done
 	end
 	
