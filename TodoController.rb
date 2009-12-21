@@ -10,7 +10,7 @@ require 'Todo'
 
 class TodoController < NSWindowController
 
-	attr_accessor :tableView, :textField, :removeButton, :items_left
+	attr_accessor :tableView, :textField, :removeButton, :items_left, :mainWindow
 	
 	# Initializing items
 	def awakeFromNib
@@ -91,6 +91,11 @@ class TodoController < NSWindowController
 		@tableView.deselectAll(self)
 		@removeButton.enabled = false
 		updateItemsCount
+	end
+	
+	# Quit app when close button is clicked
+	def windowWillClose(sender)
+		NSApp.terminate(self)
 	end
 	
 	#########
