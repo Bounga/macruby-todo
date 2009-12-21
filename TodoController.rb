@@ -10,7 +10,7 @@ require 'Todo'
 
 class TodoController < NSWindowController
 
-	attr_accessor :tableView, :textField, :removeButton, :items_count
+	attr_accessor :tableView, :textField, :removeButton, :items_left
 	
 	# Initializing items
 	def awakeFromNib
@@ -32,19 +32,18 @@ class TodoController < NSWindowController
 	
 	# Feed the TableView
 	def tableView(table, objectValueForTableColumn:column, row:row)
-		case column.headerCell.stringValue
-		when 'Items'
+		case column.identifier
+		when 'items'
 			@items[row].desc
-		when 'Created on'
+		when 'created_on'
 			@items[row].created_on
-		when 'Done'
+		when 'done'
 			@items[row].done
 		end
 	end
 	
 	# Activate remove button if a row is selected
 	def tableViewSelectionDidChange(notification)
-		updateItemsCount
 		@removeButton.enabled = true
 	end
 	
@@ -55,14 +54,15 @@ class TodoController < NSWindowController
 	
 	# Save on-the-fly changes in TableView to the datasource
 	def tableView(table, setObjectValue:object, forTableColumn:column, row:row)
-		case column.headerCell.stringValue
-		when 'Items'
+		case column.identifier
+		when 'items'
 			@items[row].desc = object
-		when 'Done'
+		when 'done'
 			@items[row].done = !@items[row].done
 			@items = sortedItems
 			@tableView.reloadData
 		end
+		updateItemsCount
 	end
 	
 	#########
@@ -80,6 +80,7 @@ class TodoController < NSWindowController
 			@items.unshift(Todo.new(@textField.stringValue))
 			@textField.stringValue = ''
 			@tableView.reloadData
+			updateItemsCount
 		end
 	end
 	
@@ -89,6 +90,7 @@ class TodoController < NSWindowController
 		@tableView.reloadData
 		@tableView.deselectAll(self)
 		@removeButton.enabled = false
+		updateItemsCount
 	end
 	
 	#########
@@ -136,8 +138,9 @@ class TodoController < NSWindowController
 	
 	# Update done / not done items count label
 	def updateItemsCount
-		done_items = @items.select { |i| i.done == false }.size
+		items_left = @items.select { |i| i.done == false }.size
 		
-		@items_count.stringValue = "#{@items.size} items - #{done_items} left"
+		@items_left.stringValue = "#{items_left} items left"
+		@tableView.tableColumns.first.headerCell.stringValue = "Items (#{@items.size})"
 	end
 end
