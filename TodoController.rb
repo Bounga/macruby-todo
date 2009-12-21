@@ -21,6 +21,11 @@ class TodoController < NSWindowController
 		updateItemsCount
 	end
 	
+	# Quit app when close button is clicked
+	def windowWillClose(sender)
+		NSApp.terminate(self)
+	end
+	
 	#########################
 	# Delegates for TableView
 	#########################
@@ -93,10 +98,6 @@ class TodoController < NSWindowController
 		updateItemsCount
 	end
 	
-	# Quit app when close button is clicked
-	def windowWillClose(sender)
-		NSApp.terminate(self)
-	end
 	
 	#########
 	# Helpers
